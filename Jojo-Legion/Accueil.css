@@ -1,0 +1,200 @@
+/* accueil.css */
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: #0D0D0D;
+    color: #A9A9A9;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+.entete-site {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 3rem;
+    background: linear-gradient(90deg, #8F00FF, #FF1493);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    transition: background-color 0.5s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.entete-site:hover {
+    background: linear-gradient(90deg, #6F00FF, #FF1493);
+}
+
+.entete-site .logo img {
+    width: 120px;
+    transition: transform 0.3s ease;
+}
+
+.entete-site .logo img:hover {
+    transform: scale(1.1);
+}
+
+.nav-principale ul {
+    list-style: none;
+    display: flex;
+    gap: 2.5rem;
+}
+
+.nav-principale a {
+    color: #FFD700;
+    text-decoration: none;
+    font-weight: bold;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.nav-principale a:hover {
+    color: #FF1493;
+}
+
+.nav-principale a::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 3px;
+    background: #FFD700;
+    transition: width 0.3s;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+}
+
+.nav-principale a:hover::after {
+    width: 100%;
+}
+
+.banniere-principale {
+    background-image: url('jojo_background.jpg');
+    background-attachment: fixed;
+    background-size: cover;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 6rem 2rem;
+    position: relative;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.banniere-principale::after {
+    content: '';
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+.banniere-principale h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 3.5rem;
+    margin: 0;
+    animation: apparaitreEnHaut 1s ease;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+@keyframes apparaitreEnHaut {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section-personnages, .section-classements, .section-forum {
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #8F00FF, #FFD700);
+    color: #FFFFFF;
+    margin: 2rem auto;
+    max-width: 1200px;
+    border-radius: 8px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section-personnages:hover, .section-classements:hover, .section-forum:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.bouton {
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.8rem 1.5rem;
+    background-color: #FF1493;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-transform: uppercase;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.bouton:hover {
+    background-color: #FFD700;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.bouton-connexion a {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background-color: #FF1493;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 1rem;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-left: 2rem;
+}
+
+.bouton-connexion a:hover {
+    background-color: #FFD700;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.pied-de-page {
+    background: linear-gradient(90deg, #8F00FF, #FF1493);
+    text-align: center;
+    padding: 2rem;
+    color: #FFD700;
+    position: relative;
+    overflow: hidden;
+    margin-top: 2rem;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.collaborateurs {
+    margin-top: 1rem;
+}
+
+.collaborateurs a {
+    color: #FFD700;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.collaborateurs a:hover {
+    color: #FF1493;
+    text-shadow: 1px 1px 2px #000000;
+}
