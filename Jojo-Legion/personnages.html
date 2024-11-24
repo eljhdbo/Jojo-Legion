@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personnages - Jojo-Legion</title>
+    <link rel="stylesheet" href="personnages.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- En-tête -->
+    <header class="entete-site">
+        <div class="logo"><a href="index.html"><img src="logoJOJO.webp" alt="Logo JJBA"></a></div>
+        <nav class="nav-principale">
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="classement.html">Classements</a></li>
+                <li><a href="theories.html">Espace Théories</a></li>
+            </ul>
+        </nav>
+        <div class="bouton-connexion"><a href="#connexion">Connexion / Inscription</a></div>
+    </header>
+
+    <!-- Contenu Principal -->
+    <main>
+        <section id="personnages" class="section-personnages">
+            <h2>Liste des Personnages</h2>
+            <!-- Filtres pour la recherche de personnages -->
+            <div class="filtres">
+                <input type="text" id="recherche" placeholder="Rechercher un personnage..." oninput="filtrerPersonnages()">
+                <select id="partie" onchange="filtrerPersonnages()">
+                    <option value="">Toutes les Parties</option>
+                    <option value="Partie 1">Partie 1</option>
+                    <option value="Partie 2">Partie 2</option>
+                    <option value="Partie 3">Partie 3</option>
+                    <!-- Ajoutez d'autres options pour chaque partie -->
+                </select>
+            </div>
+            <div id="liste-personnages" class="liste-personnages">
+                <!-- Les personnages seront insérés ici par JavaScript -->
+            </div>
+            <!-- Pagination -->
+            <div id="pagination" class="pagination">
+                <!-- Les boutons de pagination seront ajoutés dynamiquement -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Pied de page -->
+    <footer class="pied-de-page">
+        <p>&copy; 2024 Jojo-Legion. Tous droits réservés.</p>
+        <ul class="liens-sociaux">
+            <li><a href="#">Facebook</a></li>
+            <li><a href="#">Twitter</a></li>
+        </ul>
+    </footer>
+
+    <!-- Script JavaScript pour récupérer les données de l'API et les afficher -->
+    <script src="personnages.js"></script>
+</body>
+</html>
