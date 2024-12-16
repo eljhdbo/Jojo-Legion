@@ -1,11 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Théories JoJo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+{% block title %}Théories JoJo{% endblock %}
+
+{% block extra_css %}
     <style>
         body {
             font-family: 'Lato', sans-serif;
@@ -149,20 +147,11 @@
     transform: scale(1.05);
 }
     </style>
-</head>
-<body>
-    {% csrf_token %}
-    <header>
-        <a href="/"><img src="logo.png" alt="Logo JoJo"></a>
-        <nav>
-            <a href="{% url 'list_characters' %}">Personnages</a>
-            <a href="{% url 'list_theories' %}">Théories</a>
-            <a href="#">Classements</a>
-        </nav>
-        <a href="{% url 'login' %}" class="login">Connexion</a>
-    </header>
+    {% endblock %}
 
-    <main>
+    {% block content %}
+    {% csrf_token %}
+
         <h1>Théories JoJo's Bizarre Adventure</h1>
         <div class="theory-list">
             <div class="theory-card">
@@ -327,8 +316,9 @@
                 </div>
             </div>
         </div>
-    </main>
+    {% endblock %}
 
+    {% block extra_js %}
     <script>
     function likeTheory(theoryId, button) {
         if (!button) return;
@@ -360,5 +350,4 @@
     });
 }
     </script>
-</body>
-</html>
+{% endblock %}
