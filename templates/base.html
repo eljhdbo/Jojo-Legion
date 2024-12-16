@@ -1,0 +1,168 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}JoJo's Bizarre Adventure{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Styles communs */
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #0D0D0D;
+            color: #A9A9A9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #8F00FF;
+            padding: 15px 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        header img {
+            height: 50px;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        nav a {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: #FFD700;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #FF1493;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .login-btn, .logout-btn {
+            background: #FFD700;
+            color: #0D0D0D;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover, .logout-btn:hover {
+            background: #FF1493;
+            color: #FFD700;
+        }
+
+        .user-info {
+            color: #FFD700;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #FFD700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8F00FF;
+            font-weight: bold;
+        }
+
+        /* Messages de notification */
+        .messages {
+            padding: 10px 20px;
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .message.success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .message.error {
+            background-color: #f44336;
+            color: white;
+        }
+
+        /* Conteneur principal */
+        .content {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <a href="{% url 'home' %}">
+            <img src="{% static 'logo.webp' %}" alt="Logo JoJo">
+        </a>
+        <nav>
+            <a href="{% url 'home' %}">Accueil</a>
+            <a href="{% url 'list_characters' %}">Personnages</a>
+            <a href="{% url 'list_theories' %}">Théories</a>
+            <div class="user-section">
+                {% if user.is_authenticated %}
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            {{ user.username|make_list|first|upper }}
+                        </div>
+                        <span>{{ user.username }}</span>
+                    </div>
+                    <a href="{% url 'logout' %}" class="logout-btn">Déconnexion</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="login-btn">Connexion</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <div class="content">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

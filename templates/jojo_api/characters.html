@@ -1,93 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JoJo Universe</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+{% extends 'base.html' %}
+
+{% block title %}Personnages - JoJo's Bizarre Adventure{% endblock %}
+
+{% block extra_css %}
     <style>
-        /* Global Styles */
-        body {
-            font-family: 'Lato', sans-serif;
-            background-color: #0D0D0D;
-            color: #A9A9A9;
-            margin: 0;
-            padding: 0;
-        }
-
-        a {
-            text-decoration: none;
-            color: #FFD700;
-        }
-
-        a:hover {
-            color: #FF1493;
-        }
-
-        /* Header Styles */
-        header {
+        .search-filter-container {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            background-color: #8F00FF;
-            padding: 15px 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
         }
 
-        header img {
-            height: 50px;
-        }
-
-        nav {
-            display: flex;
-            gap: 20px;
-        }
-
-        nav a {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            font-weight: bold;
-            color: #FFD700;
-        }
-
-        nav a:hover {
-            color: #FF1493;
-        }
-
-        .login {
-            background: #FFD700;
-            color: #0D0D0D;
-            padding: 10px 20px;
+        .search-container input, .filter-container select {
+            padding: 10px;
+            background-color: #1A1A1A;
+            color: #A9A9A9;
+            border: 1px solid #FFD700;
             border-radius: 5px;
-            font-weight: bold;
+            width: 200px;
         }
 
-        .login:hover {
-            background: #FF1493;
-            color: #FFD700;
+        .search-container input:focus, .filter-container select:focus {
+            outline: none;
+            border-color: #FF1493;
+            box-shadow: 0 0 5px rgba(255, 20, 147, 0.5);
         }
 
-        /* Main Section Styles */
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-        }
-
-        .section-title {
-            color: #FFD700;
-            text-align: center;
-            font-family: 'Montserrat', sans-serif;
-            margin: 40px 0 20px;
-        }
-
-        /* Character Section */
         .character-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
+            padding: 20px 0;
         }
 
         .character-card {
@@ -111,136 +53,209 @@
             height: 120px;
             margin-bottom: 10px;
             border: 3px solid #FF1493;
+            object-fit: cover;
         }
 
         .character-card h3 {
             color: #FFD700;
-            font-family: 'Montserrat', sans-serif;
             margin: 10px 0;
+            font-size: 1.2em;
         }
 
-        .character-card p {
-            color: #A9A9A9;
+        .vote-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
         }
 
-        /* Forum Section */
-        .forum-list {
-            margin-top: 20px;
-        }
-
-        .forum-item {
-            background: #8F00FF;
-            color: #FFD700;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 5px;
-            transition: background 0.3s;
-            cursor: pointer;
-        }
-
-        .forum-item:hover {
-            background: #FF1493;
-        }
-
-        /* Classement Section */
-        .ranking-list {
-            list-style: none;
-            padding: 0;
-            margin-top: 20px;
-        }
-
-        .ranking-list li {
-            background: #0D0D0D;
-            border: 2px solid #FFD700;
-            margin: 10px 0;
+        .vote-button {
             padding: 10px 20px;
-            border-radius: 5px;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: #8F00FF;
-            color: #FFD700;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .sidebar input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #FFD700;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            background: #0D0D0D;
-            color: #FFD700;
-        }
-
-        .sidebar button {
-            width: 100%;
-            padding: 10px;
-            background: #FFD700;
+            background-color: #FFD700;
             color: #0D0D0D;
             font-weight: bold;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            font-size: 0.9em;
         }
 
-        .sidebar button:hover {
-            background: #FF1493;
+        .vote-button:hover:not(:disabled) {
+            background-color: #FF1493;
+            color: #FFD700;
+            transform: translateY(-2px);
+        }
+
+        .vote-button.liked {
+            background-color: #FF1493;
+            color: #FFD700;
+        }
+
+        .vote-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .likes-count {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .character-info {
+            color: #A9A9A9;
+            margin: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .filter-status {
+            text-align: center;
+            color: #FFD700;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        @keyframes likeAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .like-animation {
+            animation: likeAnimation 0.3s ease;
         }
     </style>
-</head>
-<body>
-    <!-- Header -->
-    <header>
-        <a href="/"><img src="logo.png" alt="Logo JoJo"></a>
-        <nav>
-            <a href="#">Personnages</a>
-            <a href="#">Forum</a>
-            <a href="#">Classements</a>
-        </nav>
-        <a href="#" class="login">Connexion</a>
-    </header>
+{% endblock %}
 
-    <!-- Sidebar -->
-    <div class="container">
-        <div class="sidebar">
-            <input type="text" placeholder="Rechercher un personnage...">
-            <button>Rechercher</button>
+{% block content %}
+    {% csrf_token %}
+    <div class="search-filter-container">
+        <div class="search-container">
+            <input type="text" id="character-search" placeholder="Rechercher un personnage...">
         </div>
-
-        <!-- Section Personnages -->
-        <h2 class="section-title">Personnages</h2>
-        <div class="character-grid">
-            {% for character in characters %}
-            <div class="character-card">
-                <img src="{{ character.image_url }}" alt="{{ character.name }}">
-                <h3>{{ character.name }}</h3>
-                <p>Rôle : {{ character.role }}</p>
-            </div>
-            {% endfor %}
+        <div class="filter-container">
+            <select id="part-filter">
+                <option value="">Toutes les Parties</option>
+                {% for part in parts %}
+                <option value="{{ part.id }}">{{ part.title }}</option>
+                {% endfor %}
+            </select>
         </div>
-
-        <!-- Section Forum -->
-        <h2 class="section-title">Forum</h2>
-        <div class="forum-list">
-            {% for topic in forum_topics %}
-            <div class="forum-item">
-                {{ topic.title }}
-            </div>
-            {% endfor %}
-        </div>
-
-        <!-- Section Classements -->
-        <h2 class="section-title">Classements</h2>
-        <ul class="ranking-list">
-            {% for rank in rankings %}
-            <li>{{ rank.name }} - {{ rank.score }}</li>
-            {% endfor %}
-        </ul>
     </div>
-</body>
-</html>
+
+    <div id="filter-status" class="filter-status"></div>
+
+    <h2>Personnages</h2>
+    <div id="character-grid" class="character-grid">
+        {% for character in characters %}
+        <div class="character-card" data-name="{{ character.name|lower }}" data-part="{{ character.part.id }}">
+            <img src="{{ character.image_url }}" alt="{{ character.name }}">
+            <h3>{{ character.name }}</h3>
+            <p class="character-info">Partie : {{ character.part.title }}</p>
+            <div class="vote-container">
+                {% if user.is_authenticated %}
+                    <button class="vote-button {% if character in user.characterlike_set.all %}liked{% endif %}" 
+                            data-character-id="{{ character.id }}"
+                            onclick="handleLike({{ character.id }}, this)">
+                        {% if character in user.characterlike_set.all %}
+                            ♥ Aimé
+                        {% else %}
+                            ♡ J'aime
+                        {% endif %}
+                    </button>
+                {% else %}
+                    <button class="vote-button" onclick="alertNotConnected()">♡ J'aime</button>
+                {% endif %}
+                <span class="likes-count" id="likes-count-{{ character.id }}">{{ character.nb_likes }}</span>
+            </div>
+        </div>
+        {% empty %}
+        <p>Aucun personnage trouvé.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const characterSearch = document.getElementById('character-search');
+    const partFilter = document.getElementById('part-filter');
+    const filterStatus = document.getElementById('filter-status');
+
+    function filterCharacters() {
+        const searchTerm = characterSearch.value.toLowerCase();
+        const selectedPart = partFilter.value;
+        const characterCards = document.querySelectorAll('.character-card');
+        let visibleCount = 0;
+
+        characterCards.forEach(card => {
+            const characterName = card.dataset.name;
+            const characterPart = card.dataset.part;
+
+            const nameMatch = characterName.includes(searchTerm);
+            const partMatch = selectedPart === '' || characterPart === selectedPart;
+
+            if (nameMatch && partMatch) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (searchTerm || selectedPart) {
+            filterStatus.textContent = `${visibleCount} personnage${visibleCount > 1 ? 's' : ''} trouvé${visibleCount > 1 ? 's' : ''}`;
+        } else {
+            filterStatus.textContent = '';
+        }
+    }
+
+    characterSearch.addEventListener('input', filterCharacters);
+    partFilter.addEventListener('change', filterCharacters);
+
+    function alertNotConnected() {
+        alert('Vous devez être connecté pour aimer un personnage');
+    }
+
+    function handleLike(characterId, button) {
+        if (button.disabled) return;
+        
+        button.disabled = true;
+
+        fetch(`/like-character/${characterId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            credentials: 'same-origin' 
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                button.classList.toggle('liked');
+                button.classList.add('like-animation');
+                button.innerHTML = button.classList.contains('liked') ? '♥ Aimé' : '♡ J\'aime';
+                
+                const likesCount = document.getElementById(`likes-count-${characterId}`);
+                likesCount.textContent = data.likes;
+                
+                setTimeout(() => button.classList.remove('like-animation'), 300);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            alert('Une erreur est survenue lors du like');
+        })
+        .finally(() => {
+            button.disabled = false;
+        });
+    }
+</script>
+{% endblock %}

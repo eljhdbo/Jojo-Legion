@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Théories JoJo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #0D0D0D;
+            color: #A9A9A9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #8F00FF;
+            padding: 15px 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        header img {
+            height: 50px;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        nav a:hover {
+            color: #FF1493;
+        }
+
+        .login {
+            background: #FFD700;
+            color: #0D0D0D;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .login:hover {
+            background: #FF1493;
+            color: #FFD700;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #FFD700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .theory-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .theory-card {
+            background: #0D0D0D;
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+        }
+
+        .theory-card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            margin-right: 20px;
+            border-radius: 10px;
+        }
+
+        .theory-content {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .theory-card h2 {
+            color: #FFD700;
+            margin: 10px 0;
+        }
+
+        .theory-card p {
+            margin: 10px 0;
+        }
+
+        .theory-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .theory-card button {
+            background: #FFD700;
+            color: #0D0D0D;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .theory-card button:hover {
+            background: #FF1493;
+            color: #FFD700;
+        }
+
+        .like-button {
+    background: #FFD700;
+    color: #0D0D0D;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.like-button.liked {
+    background: #FF1493;
+    color: #FFD700;
+}
+
+.like-button:hover {
+    transform: scale(1.05);
+}
+    </style>
+</head>
+<body>
+    {% csrf_token %}
+    <header>
+        <a href="/"><img src="logo.png" alt="Logo JoJo"></a>
+        <nav>
+            <a href="{% url 'list_characters' %}">Personnages</a>
+            <a href="{% url 'list_theories' %}">Théories</a>
+            <a href="#">Classements</a>
+        </nav>
+        <a href="{% url 'login' %}" class="login">Connexion</a>
+    </header>
+
+    <main>
+        <h1>Théories JoJo's Bizarre Adventure</h1>
+        <div class="theory-list">
+            <div class="theory-card">
+                <img src="/api/placeholder/150/150" alt="Kakyoin et Stone Free">
+                <div class="theory-content">
+                    <h2>Kakyoin est Stone Free</h2>
+                    <p>Une théorie fascinante suggère que le Stand de Kakyoin possède une connexion cachée et mystérieuse avec Stone Free de Jolyne.</p>
+                    <div class="theory-actions">
+                        {% if user.is_authenticated %}
+                            <button onclick="likeTheory(1, this)" class="like-button">
+                                ♡ J'aime
+                            </button>
+                        {% else %}
+                            <button onclick="alert('Vous devez être connecté pour aimer une théorie')">♡ J'aime</button>
+                        {% endif %}
+                        <span id="likes-1">0</span> likes
+                    </div>
+                </div>
+            </div>
+
+            <div class="theory-card">
+                <img src="/api/placeholder/150/150" alt="Josuke et son mystérieux sauveur">
+                <div class="theory-content">
+                    <h2>Josuke s'est déplacé dans le temps pour se sauver bébé</h2>
+                    <p>Le mystérieux sauveur de Josuke bébé pourrait être une version plus âgée de Josuke lui-même.</p>
+                    <div class="theory-actions">
+                        {% if user.is_authenticated %}
+                            <button onclick="likeTheory(2, this)" class="like-button">
+                                ♡ J'aime
+                            </button>
+                        {% else %}
+                            <button onclick="alert('Vous devez être connecté pour aimer une théorie')">♡ J'aime</button>
+                        {% endif %}
+                        <span id="likes-2">0</span> likes
+                    </div>
+                </div>
+            </div>
+
+            <div class="theory-card">
+                <img src="/api/placeholder/150/150" alt="Star Platinum et Jonathan">
+                <div class="theory-content">
+                    <h2>Star Platinum est Jonathan Joestar</h2>
+                    <p>Star Platinum représenterait l'esprit de Jonathan réincarné à travers Jotaro.</p>
+                    <div class="theory-actions">
+                        {% if user.is_authenticated %}
+                            <button onclick="likeTheory(3, this)" class="like-button">
+                                ♡ J'aime
+                            </button>
+                        {% else %}
+                            <button onclick="alert('Vous devez être connecté pour aimer une théorie')">♡ J'aime</button>
+                        {% endif %}
+                        <span id="likes-3">0</span> likes
+                    </div>
+                </div>
+            </div>
+
+            <div class="theory-card">
+                <img src="/api/placeholder/150/150" alt="Météorite et Kars">
+                <div class="theory-content">
+                    <h2>La météorite des Flèches est faite des restes de Kars</h2>
+                    <p>Les Flèches proviendraient d'une météorite formée à partir des restes de Kars, l'ultime être vivant.</p>
+                    <div class="theory-actions">
+                        {% if user.is_authenticated %}
+                            <button onclick="likeTheory(4, this)" class="like-button">
+                                ♡ J'aime
+                            </button>
+                        {% else %}
+                            <button onclick="alert('Vous devez être connecté pour aimer une théorie')">♡ J'aime</button>
+                        {% endif %}
+                        <span id="likes-4">0</span> likes
+                    </div>
+                </div>
+            </div>
+
+            <div class="theory-card">
+                <img src="/api/placeholder/150/150" alt="Dio et Pucci">
+                <div class="theory-content">
+                    <h2>Dio a planifié sa propre mort avec Pucci</h2>
+                    <p>Dio aurait orchestré sa propre mort avec l'aide de Pucci pour atteindre ses objectifs ultimes.</p>
+                    <div class="theory-actions">
+                        {% if user.is_authenticated %}
+                            <button onclick="likeTheory(5, this)" class="like-button">
+                                ♡ J'aime
+                            </button>
+                        {% else %}
+                            <button onclick="alert('Vous devez être connecté pour aimer une théorie')">♡ J'aime</button>
+                        {% endif %}
+                        <span id="likes-5">0</span> likes
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="theory-card">
+                <img src="/api/placeholder/150/150" alt="Requiem Arrow et Giorno">
+                <div class="theory-content">
+                    <h2>L'Arrow Requiem a choisi Giorno intentionnellement</h2>
+                    <p>L'Arrow Requiem aurait une conscience propre, ayant choisi Giorno pour son potentiel.</p>
+                    <div class="theory-actions">
+                        {% if user.is_authenticated %}
+                            <button onclick="likeTheory(6, this)" class="like-button">
+                                ♡ J'aime
+                            </button>
+                        {% else %}
+                            <button onclick="alert('Vous devez être connecté pour aimer une théorie')">♡ J'aime</button>
+                        {% endif %}
+                        <span id="likes-6">0</span> likes
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="theory-card">
+                <img src="/api/placeholder/150/150" alt="Johnny et Spin">
+                <div class="theory-content">
+                    <h2>Le Spin de Johnny est une évolution spirituelle</h2>
+                    <p>Le Spin est une manifestation spirituelle de la résilience de Johnny Joestar.</p>
+                    <div class="theory-actions">
+                        {% if user.is_authenticated %}
+                            <button onclick="likeTheory(7, this)" class="like-button">
+                                ♡ J'aime
+                            </button>
+                        {% else %}
+                            <button onclick="alert('Vous devez être connecté pour aimer une théorie')">♡ J'aime</button>
+                        {% endif %}
+                        <span id="likes-7">0</span> likes
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="theory-card">
+                <img src="/api/placeholder/150/150" alt="Stands et Généalogie">
+                <div class="theory-content">
+                    <h2>Les Stands sont hérités génétiquement</h2>
+                    <p>Les Stands seraient un trait génétique transmis dans le sang de la famille Joestar.</p>
+                    <div class="theory-actions">
+                        {% if user.is_authenticated %}
+                            <button onclick="likeTheory(8, this)" class="like-button">
+                                ♡ J'aime
+                            </button>
+                        {% else %}
+                            <button onclick="alert('Vous devez être connecté pour aimer une théorie')">♡ J'aime</button>
+                        {% endif %}
+                        <span id="likes-8">0</span> likes
+                    </div>
+                </div>
+            </div>
+ 
+            <div class="theory-card">
+                <img src="/api/placeholder/150/150" alt="Piliers et Stands">
+                <div class="theory-content">
+                    <h2>Les Piliers étaient des précurseurs des Stands</h2>
+                    <p>Les Piliers représentaient une forme primitive des Stands.</p>
+                    <div class="theory-actions">
+                        {% if user.is_authenticated %}
+                            <button onclick="likeTheory(9, this)" class="like-button">
+                                ♡ J'aime
+                            </button>
+                        {% else %}
+                            <button onclick="alert('Vous devez être connecté pour aimer une théorie')">♡ J'aime</button>
+                        {% endif %}
+                        <span id="likes-9">0</span> likes
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    function likeTheory(theoryId, button) {
+        if (!button) return;
+    
+    fetch(`/like-theory/${theoryId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            button.classList.toggle('liked');
+            button.innerHTML = button.classList.contains('liked') ? '♥ Aimé' : '♡ J\'aime';
+            const likeSpan = document.getElementById(`likes-${theoryId}`);
+            likeSpan.textContent = data.likes;
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors du like');
+    });
+}
+    </script>
+</body>
+</html>

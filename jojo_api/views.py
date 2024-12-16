@@ -1,33 +1,139 @@
 import requests
 from django.http import JsonResponse
-from .models import Part, Character
-from django.shortcuts import render  # Assurez-vous que cette ligne est présente
-from .models import Character  # Importez aussi vos modèles
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
+from django.db import transaction
+from django.db.models import F
+from .models import Part, Character, User, CharacterLike, Theory, ArchivedLike
+from .forms import CustomUserCreationForm
 
+def home(request):
+    return render(request, 'home.html')
+
+def list_characters(request):
+    characters = Character.objects.select_related('part').all()
+    parts = Part.objects.all()
+    return render(request, 'jojo_api/characters.html', {
+        'characters': characters,
+        'parts': parts
+    })
+
+@login_required
+@require_http_methods(["POST"])
+def like_character(request, character_id):
+    try:
+        character = get_object_or_404(Character, id=character_id)
+        
+        # Vérifier si l'utilisateur a déjà liké
+        like = CharacterLike.objects.filter(user=request.user, character=character).first()
+        
+        if like:
+            # Si le like existe, on le supprime (unlike)
+            like.delete()
+            Character.objects.filter(id=character_id).update(nb_likes=F('nb_likes') - 1)
+            message = "Like retiré"
+            liked = False
+        else:
+            # Si le like n'existe pas, on le crée
+            CharacterLike.objects.create(
+                user=request.user,
+                character=character
+            )
+            Character.objects.filter(id=character_id).update(nb_likes=F('nb_likes') + 1)
+            message = "Like ajouté"
+            liked = True
+            
+        # Récupérer le nombre de likes mis à jour
+        character.refresh_from_db()
+        
+        return JsonResponse({
+            'success': True,
+            'liked': liked,
+            'likes': character.nb_likes,
+            'message': message
+        })
+            
+    except Exception as e:
+        print(f"Erreur lors du like : {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)
+
+@login_required
+@require_http_methods(["POST"])
+def like_theory(request, theory_id):
+    try:
+        with transaction.atomic():
+            theory = get_object_or_404(Theory, id=theory_id)
+            
+            # Vérifier si un like existe déjà
+            like = ArchivedLike.objects.filter(
+                user=request.user,
+                theory=theory,
+                item_type='theory'
+            ).first()
+            
+            if like:
+                # Unlike
+                like.delete()
+                theory.likes = F('likes') - 1
+                theory.save()
+                theory.refresh_from_db()
+                return JsonResponse({
+                    'success': True,
+                    'liked': False,
+                    'likes': theory.likes,
+                    'message': 'Like retiré'
+                })
+            else:
+                # Like
+                ArchivedLike.objects.create(
+                    user=request.user,
+                    theory=theory,
+                    item_type='theory'
+                )
+                theory.likes = F('likes') + 1
+                theory.save()
+                theory.refresh_from_db()
+                return JsonResponse({
+                    'success': True,
+                    'liked': True,
+                    'likes': theory.likes,
+                    'message': 'Like ajouté'
+                })
+                
+    except Exception as e:
+        print(f"Erreur lors du like de la théorie : {str(e)}")  # Pour le débogage
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)
 
 def fetch_and_store_jojo_data(request):
     base_url = "https://api.jikan.moe/v4"
+    try:
+        anime_response = requests.get(f"{base_url}/anime?q=JoJo")
+        anime_response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({'error': f'Erreur lors de la récupération des données : {e}'}, status=500)
 
-    anime_response = requests.get(f"{base_url}/anime?q=JoJo")
-    if anime_response.status_code != 200:
-        return JsonResponse({'error': 'Impossible de récupérer les parties'}, status=anime_response.status_code)
-
-    anime_data = anime_response.json()['data']
-
-    # Liste des titres spécifiques à JoJo's Bizarre Adventure
+    anime_data = anime_response.json().get('data', [])
     valid_titles = [
-        "JoJo no Kimyou na Bouken",
+        "JoJo no Kimyou na Bouken Part 1: Phantom Blood",
+        "JoJo no Kimyou na Bouken Part 2: Sentou Chouryuu",
         "JoJo no Kimyou na Bouken Part 3: Stardust Crusaders",
         "JoJo no Kimyou na Bouken Part 4: Diamond wa Kudakenai",
         "JoJo no Kimyou na Bouken Part 5: Ougon no Kaze",
         "JoJo no Kimyou na Bouken Part 6: Stone Ocean",
-        "JoJo no Kimyou na Bouken: Phantom Blood",
     ]
 
     for anime in anime_data:
-        # Vérifie si le titre contient "JoJo" et figure dans la liste des titres valides
-        if any(title in anime['title'] for title in valid_titles):
-            part, created = Part.objects.get_or_create(
+        if anime['title'] in valid_titles:
+            part, _ = Part.objects.get_or_create(
                 mal_id=anime['mal_id'],
                 defaults={
                     'title': anime['title'],
@@ -35,24 +141,57 @@ def fetch_and_store_jojo_data(request):
                     'image_url': anime['images']['jpg']['image_url'],
                 }
             )
-
-            # Récupérer les personnages associés
-            characters_response = requests.get(f"{base_url}/anime/{anime['mal_id']}/characters")
-            if characters_response.status_code == 200:
-                char_data = characters_response.json()['data']
-                for char in char_data:
-                    Character.objects.get_or_create(
-                        name=char['character']['name'],
-                        part=part,
-                        defaults={
-                            'role': char.get('role', 'Inconnu'),
-                            'image_url': char['character']['images']['jpg']['image_url'],
-                        }
-                    )
+            
+            try:
+                characters_response = requests.get(f"{base_url}/anime/{anime['mal_id']}/characters")
+                if characters_response.status_code == 200:
+                    char_data = characters_response.json().get('data', [])
+                    for char in char_data:
+                        Character.objects.get_or_create(
+                            name=char['character']['name'],
+                            defaults={
+                                'role': char.get('role', 'Inconnu'),
+                                'image_url': char['character']['images']['jpg']['image_url'],
+                                'part': part,
+                            }
+                        )
+            except requests.exceptions.RequestException:
+                continue
 
     return JsonResponse({'message': 'Données récupérées et stockées avec succès !'})
 
+def list_theories(request):
+    theories = Theory.objects.all()
+    return render(request, 'jojo_api/theories.html', {'theories': theories})
 
-def list_characters(request):
-    characters = Character.objects.all()  # Récupère tous les personnages de la base
-    return render(request, 'jojo_api/characters.html', {'characters': characters})
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, f"Bienvenue {user.username} !")
+            return redirect('home')
+        else:
+            messages.error(request, "Identifiants invalides. Veuillez réessayer.")
+
+    return render(request, 'login.html')
+
+@login_required
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Vous vous êtes déconnecté avec succès.")
+    return redirect('login')
+
+def register_view(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Votre compte a été créé avec succès. Veuillez vous connecter.')
+            return redirect('login')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'register.html', {'form': form})
