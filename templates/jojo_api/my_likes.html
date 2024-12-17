@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Likes - JoJo{% endblock %}
+
+{% block extra_css %}
+<style>
+    .likes-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .section-title {
+        color: #FFD700;
+        font-size: 2em;
+        margin: 30px 0 20px;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .like-card {
+        background: #0D0D0D;
+        border: 2px solid #FFD700;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .like-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .like-card img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        margin: 0 auto 15px;
+        display: block;
+        object-fit: cover;
+        border: 3px solid #FF1493;
+    }
+
+    .like-card h3 {
+        color: #FFD700;
+        margin: 10px 0;
+        font-size: 1.2em;
+    }
+
+    .like-card p {
+        color: #A9A9A9;
+        margin: 5px 0;
+        font-size: 0.9em;
+    }
+
+    .unlike-button {
+        background: #FF1493;
+        color: #FFD700;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .unlike-button:hover {
+        background: #FFD700;
+        color: #0D0D0D;
+    }
+
+    .empty-message {
+        text-align: center;
+        color: #A9A9A9;
+        font-style: italic;
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="likes-container">
+    {% csrf_token %}
+    
+    <h2 class="section-title">Personnages Likés</h2>
+    {% if liked_characters %}
+        <div class="grid-container">
+            {% for character in liked_characters %}
+            <div class="like-card">
+                <img src="{{ character.image_url }}" alt="{{ character.name }}">
+                <h3>{{ character.name }}</h3>
+                <p>{{ character.part.title }}</p>
+                <button class="unlike-button" onclick="handleLike({{ character.id }}, this)" data-character-id="{{ character.id }}">
+                    ♥ Retirer le like
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-message">Vous n'avez liké aucun personnage pour le moment.</p>
+    {% endif %}
+
+    <h2 class="section-title">Théories Likées</h2>
+    {% if liked_theories %}
+        <div class="grid-container">
+            {% for theory in liked_theories %}
+            <div class="like-card">
+                <img src="/api/placeholder/150/150" alt="{{ theory.title }}">
+                <h3>{{ theory.title }}</h3>
+                <p>{{ theory.content|truncatewords:20 }}</p>
+                <button class="unlike-button" onclick="likeTheory({{ theory.id }}, this)">
+                    ♥ Retirer le like
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="empty-message">Vous n'avez liké aucune théorie pour le moment.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Réutilisation de la fonction handleLike pour les personnages
+function handleLike(characterId, button) {
+    if (button.disabled) return;
+    button.disabled = true;
+
+    fetch(`/like-character/${characterId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Supprimer la carte du personnage
+            button.closest('.like-card').remove();
+            
+            // Vérifier s'il reste des personnages
+            const remainingCharacters = document.querySelectorAll('.grid-container:first-of-type .like-card');
+            if (remainingCharacters.length === 0) {
+                document.querySelector('.grid-container:first-of-type')
+                    .innerHTML = '<p class="empty-message">Vous n\'avez liké aucun personnage pour le moment.</p>';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue');
+    })
+    .finally(() => {
+        button.disabled = false;
+    });
+}
+
+// Réutilisation de la fonction likeTheory pour les théories
+function likeTheory(theoryId, button) {
+    if (button.disabled) return;
+    button.disabled = true;
+
+    fetch(`/like-theory/${theoryId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Supprimer la carte de la théorie
+            button.closest('.like-card').remove();
+            
+            // Vérifier s'il reste des théories
+            const remainingTheories = document.querySelectorAll('.grid-container:last-of-type .like-card');
+            if (remainingTheories.length === 0) {
+                document.querySelector('.grid-container:last-of-type')
+                    .innerHTML = '<p class="empty-message">Vous n\'avez liké aucune théorie pour le moment.</p>';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue');
+    })
+    .finally(() => {
+        button.disabled = false;
+    });
+}
+</script>
+{% endblock %}

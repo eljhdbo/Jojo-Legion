@@ -161,7 +161,19 @@ def fetch_and_store_jojo_data(request):
     return JsonResponse({'message': 'Données récupérées et stockées avec succès !'})
 
 def list_theories(request):
-    theories = Theory.objects.all()
+    theories = Theory.objects.all().prefetch_related('archivedlike_set')
+    
+    # Pour chaque théorie, vérifions si l'utilisateur l'a déjà likée
+    for theory in theories:
+        # On initialise des attributs pour faciliter l'accès dans le template
+        theory.is_liked = False
+        if request.user.is_authenticated:
+            theory.is_liked = ArchivedLike.objects.filter(
+                user=request.user,
+                theory=theory,
+                item_type='theory'
+            ).exists()
+    
     return render(request, 'jojo_api/theories.html', {'theories': theories})
 
 def login_view(request):
@@ -195,3 +207,21 @@ def register_view(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
+
+@login_required
+def my_likes(request):
+    # Récupérer les personnages likés via CharacterLike
+    liked_characters = Character.objects.filter(
+        likes__user=request.user  # Utilisation de la relation inverse 'likes'
+    ).select_related('part')
+    
+    # Récupérer les théories likées via ArchivedLike
+    liked_theories = Theory.objects.filter(
+        archivedlike__user=request.user,
+        archivedlike__item_type='theory'
+    )
+    
+    return render(request, 'jojo_api/my_likes.html', {
+        'liked_characters': liked_characters,
+        'liked_theories': liked_theories
+    })

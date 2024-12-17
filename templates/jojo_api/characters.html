@@ -181,81 +181,117 @@
 {% block extra_js %}
 <script>
     const characterSearch = document.getElementById('character-search');
-    const partFilter = document.getElementById('part-filter');
-    const filterStatus = document.getElementById('filter-status');
+const partFilter = document.getElementById('part-filter');
+const filterStatus = document.getElementById('filter-status');
+let searchTimeout;
 
-    function filterCharacters() {
-        const searchTerm = characterSearch.value.toLowerCase();
+function filterCharacters() {
+    clearTimeout(searchTimeout);
+    
+    searchTimeout = setTimeout(() => {
+        const searchTerms = characterSearch.value.toLowerCase().trim().split(/\s+/);
         const selectedPart = partFilter.value;
         const characterCards = document.querySelectorAll('.character-card');
         let visibleCount = 0;
 
         characterCards.forEach(card => {
-            const characterName = card.dataset.name;
+            const characterName = card.dataset.name.toLowerCase();
             const characterPart = card.dataset.part;
-
-            const nameMatch = characterName.includes(searchTerm);
-            const partMatch = selectedPart === '' || characterPart === selectedPart;
+            
+            // Amélioration de la recherche multi-termes
+            const nameMatch = searchTerms.every(term => 
+                characterName.includes(term) || 
+                card.querySelector('.character-info').textContent.toLowerCase().includes(term)
+            );
+            const partMatch = !selectedPart || characterPart === selectedPart;
 
             if (nameMatch && partMatch) {
-                card.style.display = 'block';
+                card.classList.remove('hidden');
                 visibleCount++;
             } else {
-                card.style.display = 'none';
+                card.classList.add('hidden');
             }
         });
 
-        if (searchTerm || selectedPart) {
-            filterStatus.textContent = `${visibleCount} personnage${visibleCount > 1 ? 's' : ''} trouvé${visibleCount > 1 ? 's' : ''}`;
-        } else {
-            filterStatus.textContent = '';
+        updateFilterStatus(visibleCount, searchTerms.length > 0 || selectedPart);
+    }, 300); // Debounce de 300ms
+}
+
+function updateFilterStatus(count, hasFilters) {
+    if (!hasFilters) {
+        filterStatus.textContent = '';
+        return;
+    }
+
+    if (count === 0) {
+        filterStatus.textContent = 'Aucun personnage trouvé';
+    } else {
+        filterStatus.textContent = `${count} personnage${count > 1 ? 's' : ''} trouvé${count > 1 ? 's' : ''}`;
+    }
+}
+
+function handleLike(characterId, button) {
+    if (button.disabled) return;
+    
+    button.disabled = true;
+    
+    fetch(`/like-character/${characterId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Erreur réseau');
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            updateLikeButton(button, data.liked);
+            updateLikesCount(characterId, data.likes);
         }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors du like');
+    })
+    .finally(() => {
+        button.disabled = false;
+    });
+}
+
+function updateLikeButton(button, isLiked) {
+    button.classList.toggle('liked', isLiked);
+    button.classList.add('like-animation');
+    button.innerHTML = isLiked ? '♥ Aimé' : '♡ J\'aime';
+    setTimeout(() => button.classList.remove('like-animation'), 300);
+}
+
+function updateLikesCount(characterId, count) {
+    const likesCount = document.getElementById(`likes-count-${characterId}`);
+    if (likesCount) {
+        likesCount.textContent = count;
     }
+}
 
-    characterSearch.addEventListener('input', filterCharacters);
-    partFilter.addEventListener('change', filterCharacters);
-
-    function alertNotConnected() {
-        alert('Vous devez être connecté pour aimer un personnage');
+function alertNotConnected() {
+    const message = 'Vous devez être connecté pour aimer un personnage';
+    if (confirm(`${message}\nVoulez-vous vous connecter ?`)) {
+        window.location.href = '/login/';
     }
+}
 
-    function handleLike(characterId, button) {
-        if (button.disabled) return;
-        
-        button.disabled = true;
+// Event Listeners
+characterSearch.addEventListener('input', filterCharacters);
+partFilter.addEventListener('change', filterCharacters);
 
-        fetch(`/like-character/${characterId}/`, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-            },
-            credentials: 'same-origin' 
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                button.classList.toggle('liked');
-                button.classList.add('like-animation');
-                button.innerHTML = button.classList.contains('liked') ? '♥ Aimé' : '♡ J\'aime';
-                
-                const likesCount = document.getElementById(`likes-count-${characterId}`);
-                likesCount.textContent = data.likes;
-                
-                setTimeout(() => button.classList.remove('like-animation'), 300);
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            alert('Une erreur est survenue lors du like');
-        })
-        .finally(() => {
-            button.disabled = false;
-        });
-    }
+// Initialisation
+document.addEventListener('DOMContentLoaded', () => {
+    // Reset des filtres au chargement
+    characterSearch.value = '';
+    partFilter.value = '';
+    filterCharacters();
+});
 </script>
 {% endblock %}

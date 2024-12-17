@@ -42,11 +42,22 @@ class CharacterLike(models.Model):
     def __str__(self):
         return f"{self.user.username} aime {self.character.name}"
 class Theory(models.Model):
+
     title = models.CharField(max_length=200)
     content = models.TextField()
     content_date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     likes = models.IntegerField(default=0)
+    image_url = models.CharField(max_length=255, null=True, blank=True)
+
+
+    def get_image_url(self):
+        """Retourne l'URL complète de l'image"""
+        if self.image_url:
+            if self.image_url.startswith('/static/'):
+                return self.image_url[7:]  # Enlève '/static/' du début
+            return self.image_url
+        return 'images/theories/default.jpg'  # Image par défaut  # Nouveau champ
 
     def __str__(self):
         return self.title
