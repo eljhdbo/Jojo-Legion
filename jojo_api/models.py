@@ -51,16 +51,11 @@ class Theory(models.Model):
     image_url = models.CharField(max_length=255, null=True, blank=True)
 
 
-    def get_image_url(self):
-        """Retourne l'URL complète de l'image"""
-        if self.image_url:
-            if self.image_url.startswith('/static/'):
-                return self.image_url[7:]  # Enlève '/static/' du début
-            return self.image_url
-        return 'images/theories/default.jpg'  # Image par défaut  # Nouveau champ
-
-    def __str__(self):
-        return self.title
+def get_image_url(self):
+    """Retourne l'URL complète de l'image"""
+    if self.image_url:
+        return self.image_url
+    return 'images/theories/default.jpg'
 
 class ArchivedLike(models.Model):
     ITEM_TYPE_CHOICES = [

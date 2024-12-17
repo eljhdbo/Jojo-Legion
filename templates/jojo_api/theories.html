@@ -193,7 +193,11 @@
 <div class="theory-list">
     {% for theory in theories %}
     <div class="theory-card">
-        <img src="{% static theory.image_url|cut:'/static/' %}" alt="{{ theory.title }}" onerror="this.src='/api/placeholder/200/200'">
+        {% load static %}
+        <img src="{% static theory.get_image_url %}" 
+        alt="{{ theory.title }}" 
+        onerror="console.log('Erreur de chargement pour: ' + this.src)"  # Pour déboguer
+        class="theory-image">
         <div class="theory-content">
             <h2>{{ theory.title }}</h2>
             <p>{{ theory.content }}</p>

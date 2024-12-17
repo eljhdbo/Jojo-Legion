@@ -15,6 +15,13 @@ def home(request):
 
 def list_characters(request):
     characters = Character.objects.select_related('part').all()
+    
+    # Si l'utilisateur est connecté, on récupère ses likes
+    if request.user.is_authenticated:
+        user_likes = CharacterLike.objects.filter(user=request.user).values_list('character_id', flat=True)
+        for character in characters:
+            character.is_liked = character.id in user_likes
+    
     parts = Part.objects.all()
     return render(request, 'jojo_api/characters.html', {
         'characters': characters,

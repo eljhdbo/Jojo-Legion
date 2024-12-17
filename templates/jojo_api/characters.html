@@ -7,7 +7,7 @@
           .hidden {
             display: none;
         }
-        
+
         .search-filter-container {
             display: flex;
             justify-content: space-between;
@@ -161,10 +161,10 @@
             <p class="character-info">Partie : {{ character.part.title }}</p>
             <div class="vote-container">
                 {% if user.is_authenticated %}
-                    <button class="vote-button {% if character in user.characterlike_set.all %}liked{% endif %}" 
+                    <button class="vote-button {% if character.is_liked %}liked{% endif %}" 
                             data-character-id="{{ character.id }}"
                             onclick="handleLike({{ character.id }}, this)">
-                        {% if character in user.characterlike_set.all %}
+                        {% if character.is_liked %}
                             ♥ Aimé
                         {% else %}
                             ♡ J'aime
