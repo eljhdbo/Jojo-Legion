@@ -77,6 +77,21 @@ Adaptez le fichier `settings.py` avec les paramètres de votre base de données 
 
 ---
 
+## La base de données
+
+Le projet utilise une base de données SQLite pour une gestion simplifiée et efficace.
+
+- **Emplacement du fichier** : `db.sqlite3`
+- **Gestion des données** : Django ORM offre une interface puissante et facile d’accès pour manipuler les modèles de personnages et de théories.
+
+Pour accéder directement aux données ou les manipuler, utilisez la commande suivante :
+
+```bash
+python manage.py shell
+```
+
+---
+
 ## Pour un lancement rapide
 
 1. **Démarrez le serveur local** :
@@ -91,17 +106,3 @@ Adaptez le fichier `settings.py` avec les paramètres de votre base de données 
    print(response.json())
    ```
 
----
-
-## La base de données
-
-Le projet utilise une base de données SQLite pour une gestion simplifiée et efficace.
-
-- **Emplacement du fichier** : `db.sqlite3`
-- **Gestion des données** : Django ORM offre une interface puissante et facile d’accès pour manipuler les modèles de personnages et de théories.
-
-Pour accéder directement aux données ou les manipuler, utilisez la commande suivante :
-
-```bash
-python manage.py shell
-```
