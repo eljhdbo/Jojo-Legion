@@ -112,7 +112,8 @@
         <div class="grid-container">
             {% for theory in liked_theories %}
             <div class="like-card">
-                <img src="/api/placeholder/150/150" alt="{{ theory.title }}">
+                {% load static %}
+<img src="{% static theory.image_url %}" alt="{{ theory.title }}">
                 <h3>{{ theory.title }}</h3>
                 <p>{{ theory.content|truncatewords:20 }}</p>
                 <button class="unlike-button" onclick="likeTheory({{ theory.id }}, this)">

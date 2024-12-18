@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Classement - JoJo's Bizarre Adventure{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .ranking-card {
+            background: #0D0D0D;
+            border: 2px solid #FFD700;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            background: #1A1A1A;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .ranking-item:hover {
+            transform: scale(1.02);
+        }
+        
+        .rank-number {
+            color: #FFD700;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+            min-width: 40px;
+        }
+        
+        .character-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #FF1493;
+            margin-right: 15px;
+        }
+        
+        .item-info {
+            flex-grow: 1;
+        }
+        
+        .item-name {
+            color: #FFD700;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .item-detail {
+            color: #A9A9A9;
+            font-size: 14px;
+        }
+        
+        .like-count {
+            color: #FF1493;
+            font-weight: bold;
+            font-size: 18px;
+            margin-left: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <!-- Classement des Personnages -->
+        <div class="ranking-card">
+            <h2 style="color: #FFD700; font-size: 24px; margin-bottom: 20px;">Top 10 des Personnages les plus likés</h2>
+            {% for character in top_characters %}
+                <div class="ranking-item">
+                    <div class="rank-number">#{{ forloop.counter }}</div>
+                    <img src="{{ character.image_url }}" alt="{{ character.name }}" class="character-img">
+                    <div class="item-info">
+                        <div class="item-name">{{ character.name }}</div>
+                        <div class="item-detail">{{ character.part.title }}</div>
+                    </div>
+                    <div class="like-count">♥ {{ character.nb_likes }}</div>
+                </div>
+            {% empty %}
+                <p style="color: #A9A9A9;">Aucun personnage n'a encore été liké</p>
+            {% endfor %}
+        </div>
+
+        <!-- Classement des Théories -->
+        <div class="ranking-card">
+            <h2 style="color: #FFD700; font-size: 24px; margin-bottom: 20px;">Top 10 des Théories les plus likés</h2>
+            {% for theory in top_theories %}
+                <div class="ranking-item">
+                    <div class="rank-number">#{{ forloop.counter }}</div>
+                    <div class="item-info">
+                        <div class="item-name">{{ theory.title }}</div>
+                        <div class="item-detail">Par {{ theory.user.username }}</div>
+                    </div>
+                    <div class="like-count">♥ {{ theory.likes }}</div>
+                </div>
+            {% empty %}
+                <p style="color: #A9A9A9;">Aucune théorie n'a encore été likée</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

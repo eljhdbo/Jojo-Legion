@@ -202,12 +202,13 @@ function filterCharacters() {
             const characterName = card.dataset.name.toLowerCase();
             const characterPart = card.dataset.part;
             
-            // Amélioration de la recherche multi-termes
+            // Modification ici : conversion en string pour la comparaison
+            const partMatch = !selectedPart || characterPart === String(selectedPart);
+            
             const nameMatch = searchTerms.every(term => 
                 characterName.includes(term) || 
                 card.querySelector('.character-info').textContent.toLowerCase().includes(term)
             );
-            const partMatch = !selectedPart || characterPart === selectedPart;
 
             if (nameMatch && partMatch) {
                 card.classList.remove('hidden');
@@ -218,7 +219,7 @@ function filterCharacters() {
         });
 
         updateFilterStatus(visibleCount, searchTerms.length > 0 || selectedPart);
-    }, 300); // Debounce de 300ms
+    }, 300);
 }
 
 function updateFilterStatus(count, hasFilters) {
