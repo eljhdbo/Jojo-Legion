@@ -1,9 +1,9 @@
 # Jojo Legion
 ## Contexte :
 
-Dans le cadre d'un projet scolaire stimulant, nous avons créé un site web sur le thème fascinant de JoJo’s Bizarre Adventure. L'objectif principal était de maîtriser Django pour concevoir une API fonctionnelle, tout en respectant les étapes d'un développement web bien structuré.
+Dans le cadre d’un projet scolaire, nous avons développé un site web dédié à l’univers de JoJo’s Bizarre Adventure. Ce projet avait pour objectif principal d’apprendre à utiliser une API dans un contexte concret, en exploitant Django pour concevoir un site web fonctionnel tout en respectant les principes d’un développement structuré. 
 
-Ce site propose une plongée dans l'univers de JoJo, avec plus de 150 personnages emblématiques classés par parties, soigneusement extraits de l'API "Jikan" basée sur MyAnimeList. En plus, il offre des théories captivantes autour du manga, un classement des personnages via un système de likes, et une section personnalisée pour consulter ses propres interactions.
+Ce site propose une plongée dans l'univers de JoJo, avec plus de 150 personnages emblématiques classés par parties, soigneusement extraits de l'API "Jikan" basée sur MyAnimeList. En plus, il offre des théories autour du manga, un classement des personnages via un système de likes, et une section personnalisée pour consulter ses propres interactions.
 
 ---
 
