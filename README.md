@@ -1,5 +1,3 @@
-# Projet école : Site web inspiré de JoJo’s Bizarre Adventure
-
 ## Contexte :
 
 Dans le cadre d'un projet scolaire stimulant, nous avons créé un site web sur le thème fascinant de JoJo’s Bizarre Adventure. L'objectif principal était de maîtriser Django pour concevoir une API fonctionnelle, tout en respectant les étapes d'un développement web bien structuré.
