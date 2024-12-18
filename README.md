@@ -49,7 +49,7 @@ Le site propose une exploration de l’univers de JoJo, répertoriant prés de 1
 
 ### Prérequis (logiciel)
 
-1. **Un IDE ** : Nous recommandons [Visual Studio Code](https://code.visualstudio.com/) car il est simple à prendre en main, très pratique pour organiser son code, et parfait pour apprendre.
+1. **Un IDE** : Nous recommandons [Visual Studio Code](https://code.visualstudio.com/) car il est simple à prendre en main, très pratique pour organiser son code, et parfait pour apprendre.
 2. **Python** : Installez [Python](https://www.python.org/downloads/) la version 3.8 ou plus. Django, étant un Framework basé sur Python, ce langage est donc nécessaire.
 3. **Django** : Installez Django avec cette commande dans le terminal :
    ```bash
@@ -74,20 +74,14 @@ Le site propose une exploration de l’univers de JoJo, répertoriant prés de 1
    git clone https://github.com/eljhdbo/Jojo-Legion.git
    cd jojo-site
    ```
-
 2. Installez les dépendances requises :
    ```bash
    pip install -r requirements.txt
    ```
-3. Appliquez les migrations pour initialiser la base de données :
-   ```bash
-   python manage.py migrate
-   ```
-   4. Ajoutez les theories p :
+3. Ajoutez les theories p :
    ```bash
    python manage.py add_theories
    ```
-
 
 ## lancer le serveur
 
@@ -95,14 +89,17 @@ Le site propose une exploration de l’univers de JoJo, répertoriant prés de 1
    ```bash
    python manage.py runserver
    ```
+2. **Accéder à l'URL du site** :  
+[http://127.0.0.1:8000/](http://127.0.0.1:8000/) et ajouter `/fetch-data/`  
+comme cela : [http://127.0.0.1:8000/fetch-data/](http://127.0.0.1:8000/fetch-data/)  
 
-2. acceder a l'url du site :
- http://127.0.0.1:8000/ et ajouter /fetch-data/
-comme cela http://127.0.0.1:8000/fetch-data/
-par la suite un message  comme ceci qui indique que les perso on été ajouté : {
+Par la suite, un message comme ceci indique que les persos ont été ajoutés :  
+
+{
   "message": "Données récupérées et stockées avec succès !"
 }
-## vous pouvez désormais utilisez le JoJo Legion 
+
+## vous pouvez désormais utilisez JoJo Legion !
 
 ---
 
